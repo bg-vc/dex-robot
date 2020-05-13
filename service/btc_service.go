@@ -174,28 +174,32 @@ func TradeBTCHandle() {
 		return
 	}
 
-	if buyLen-sellLen >= 5 {
-		if err := sell(buyList); err != nil {
-			log.Errorf(err, "sell error")
+	if buyLen >= 15 && sellLen >= 15 && buyLen-sellLen >= 5 {
+		if err := sell4Five(buyList); err != nil {
+			log.Errorf(err, "sell4Five error")
 		}
 		return
 	}
 
-	if sellLen-buyLen >= 5 {
-		if err := buy(sellList); err != nil {
-			log.Errorf(err, "buy error")
+	if buyLen >= 15 && sellLen >= 15 && sellLen-buyLen >= 5 {
+		if err := buy4Five(sellList); err != nil {
+			log.Errorf(err, "sell4Five error")
 		}
 		return
 	}
 
 	rand := RandInt64(1, 3)
 	if rand == 1 {
-		if err := buy(sellList); err != nil {
-			log.Errorf(err, "buy error")
+		if sellLen >= 15 {
+			buy4Five(sellList)
+		} else {
+			buy(sellList)
 		}
 	} else {
-		if err := sell(buyList); err != nil {
-			log.Errorf(err, "sell error")
+		if buyLen >= 15 {
+			sell4Five(buyList)
+		} else {
+			sell(buyList)
 		}
 	}
 	return
@@ -216,7 +220,27 @@ func buy(sellList []*PairOrderModel) error {
 	}
 	log.Infof("TradeBTCHandle buy success")
 	return nil
+}
 
+func buy4Five(sellList []*PairOrderModel) error {
+	userAddr := btcOwner
+	userKey := btcOwnerKey
+	token1 := btcTokenAddr
+	buyPrice := int64(sellList[4].Price * 1e6)
+	token2 := trxTokenAddr
+	amount1 := int64(0)
+	for i := 0; i <= 4; i++ {
+		amount1 += int64(sellList[i].TotalQuoteAmount * 1e6)
+	}
+	amount1 += 20 * 1e6
+	amount2 := amount1 * buyPrice / 1e6
+	err := Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
+	if err != nil {
+		log.Errorf(err, "Buy error")
+		return err
+	}
+	log.Infof("TradeBTCHandle buy4Five success")
+	return nil
 }
 
 func sell(buyList []*PairOrderModel) error {
@@ -238,6 +262,32 @@ func sell(buyList []*PairOrderModel) error {
 		return err
 	}
 	log.Infof("TradeBTCHandle sell success")
+	return nil
+}
+
+func sell4Five(buyList []*PairOrderModel) error {
+	userAddr := btcOwner
+	userKey := btcOwnerKey
+	token1 := btcTokenAddr
+	sellPrice := int64(buyList[4].Price * 1e6)
+	token2 := trxTokenAddr
+	amount1 := RandInt64(20, 30) * 1e6
+	for i := 0; i <= 4; i++ {
+		amount1 += int64(buyList[i].TotalQuoteAmount * 1e6)
+	}
+	amount1 += 20 * 1e6
+	amount2 := amount1 * sellPrice / 1e6
+	err := Approve(btcTokenAddr, userAddr, userKey, dexContractAddr, amount1)
+	if err != nil {
+		log.Errorf(err, "Approve error")
+		return err
+	}
+	err = Sell(false, userAddr, userKey, token1, token2, amount1, amount2, sellPrice, 0)
+	if err != nil {
+		log.Errorf(err, "sell error")
+		return err
+	}
+	log.Infof("TradeBTCHandle sell4Five success")
 	return nil
 }
 
