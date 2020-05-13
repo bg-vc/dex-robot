@@ -219,17 +219,19 @@ func TradeBTCHandle() {
 	}
 
 	if orderType == BUY {
-		if sellLen >= 30 {
+		/*if sellLen >= 30 {
 			buy4Five(sellList)
 		} else {
 			buy(sellList)
-		}
+		}*/
+		buy(sellList)
 	} else {
-		if buyLen >= 30 {
+		/*if buyLen >= 30 {
 			sell4Five(buyList)
 		} else {
 			sell(buyList)
-		}
+		}*/
+		sell(buyList)
 	}
 	return
 }
