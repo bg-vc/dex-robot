@@ -197,21 +197,21 @@ func TradeBTCHandle() {
 	rand := RandInt64(1, 101)
 	// 早上8点之前 以卖单为主
 	if currentTime <= dateTime12 {
-		if currentTime%(30*60) <= 600 {
+		if currentTime%(30*60) <= 300 {
 			sell4Five(buyList)
 			return
 		}
-		if rand <= 30 {
+		if rand <= 40 {
 			orderType = BUY
 		} else {
 			orderType = SELL
 		}
 	} else if currentTime > dateTime12 {
-		if currentTime%(30*60) <= 600 {
+		if currentTime%(30*60) <= 300 {
 			buy4Five(sellList)
 			return
 		}
-		if rand <= 70 {
+		if rand <= 60 {
 			orderType = BUY
 		} else {
 			orderType = SELL
