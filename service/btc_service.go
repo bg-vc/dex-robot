@@ -183,12 +183,12 @@ func TradeBTCHandle() {
 
 	dateTime12 := dateTime00 + 60*60*(12-8)
 
-	if buyLen >= 20 && buyLen-sellLen >= 5 {
+	if buyLen >= 10 && buyLen-sellLen >= 5 {
 		sell4Five(buyList)
 		return
 	}
 
-	if sellLen >= 20 && sellLen-buyLen >= 5 {
+	if sellLen >= 10 && sellLen-buyLen >= 5 {
 		buy4Five(sellList)
 		return
 	}
