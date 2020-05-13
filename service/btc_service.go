@@ -58,7 +58,7 @@ func BuyBTCHandle() {
 		}
 		// 比当前价格少10000
 		buyPrice = tempPrice - 10000
-	} else if buyLen < 10 {
+	} else if buyLen < 20 {
 		tempPrice := int64(buyList[buyLen-1].Price * 1e6)
 		if tempPrice <= 700000 {
 			tempPrice = 900000
@@ -120,7 +120,7 @@ func SellBTCHandle() {
 		}
 		// 比当前价格多10000
 		sellPrice = tempPrice + 10000
-	} else if sellLen < 10 {
+	} else if sellLen < 20 {
 		tempPrice := int64(sellList[sellLen-1].Price * 1e6)
 		if tempPrice >= 2200000 {
 			tempPrice = 2000000
@@ -197,8 +197,13 @@ func TradeBTCHandle() {
 	rand := RandInt64(1, 101)
 	// 早上8点之前 以卖单为主
 	if currentTime <= dateTime12 {
-		if currentTime%(30*60) <= 300 {
+		time60 := currentTime % (60 * 60)
+		time15 := currentTime % (15 * 60)
+		if time15 <= 300 && time60 < 2700 {
 			sell4Five(buyList)
+			return
+		} else if time15 <= 300 && time60 >= 2700 {
+			buy4Five(sellList)
 			return
 		}
 		if rand <= 40 {
@@ -207,8 +212,13 @@ func TradeBTCHandle() {
 			orderType = SELL
 		}
 	} else if currentTime > dateTime12 {
-		if currentTime%(30*60) <= 300 {
+		time60 := currentTime % (60 * 60)
+		time15 := currentTime % (15 * 60)
+		if time15 <= 300 && time60 < 2700 {
 			buy4Five(sellList)
+			return
+		} else if time15 <= 300 && time60 >= 2700 {
+			sell4Five(buyList)
 			return
 		}
 		if rand <= 60 {
