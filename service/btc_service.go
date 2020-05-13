@@ -177,12 +177,12 @@ func TradeBTCHandle() {
 		return
 	}
 
-	if buyLen >= 20 && sellLen >= 15 && buyLen-sellLen >= 5 {
+	if buyLen >= 20 && buyLen-sellLen >= 5 {
 		sell4Five(buyList)
 		return
 	}
 
-	if sellLen >= 20 && buyLen >= 15 && sellLen-buyLen >= 5 {
+	if sellLen >= 20 && sellLen-buyLen >= 5 {
 		buy4Five(sellList)
 		return
 	}
