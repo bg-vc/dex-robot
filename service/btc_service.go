@@ -177,17 +177,13 @@ func TradeBTCHandle() {
 		return
 	}
 
-	if buyLen >= 15 && sellLen >= 15 && buyLen-sellLen >= 5 {
-		if err := sell4Five(buyList); err != nil {
-			log.Errorf(err, "sell4Five error")
-		}
+	if buyLen >= 20 && sellLen >= 15 && buyLen-sellLen >= 5 {
+		sell4Five(buyList)
 		return
 	}
 
-	if buyLen >= 15 && sellLen >= 15 && sellLen-buyLen >= 5 {
-		if err := buy4Five(sellList); err != nil {
-			log.Errorf(err, "sell4Five error")
-		}
+	if sellLen >= 20 && buyLen >= 15 && sellLen-buyLen >= 5 {
+		buy4Five(sellList)
 		return
 	}
 
@@ -201,13 +197,21 @@ func TradeBTCHandle() {
 	rand := RandInt64(1, 101)
 	// 12点之前 以卖单为主
 	if currentTime <= dateTime12 {
-		if rand <= 20 {
+		if currentTime%(30*60) <= 300 {
+			sell4Five(buyList)
+			return
+		}
+		if rand <= 15 {
 			orderType = BUY
 		} else {
 			orderType = SELL
 		}
 	} else if currentTime > dateTime12 {
-		if rand <= 80 {
+		if currentTime%(30*60) <= 300 {
+			buy4Five(sellList)
+			return
+		}
+		if rand <= 85 {
 			orderType = BUY
 		} else {
 			orderType = SELL
@@ -215,13 +219,13 @@ func TradeBTCHandle() {
 	}
 
 	if orderType == BUY {
-		if sellLen >= 15 {
+		if sellLen >= 18 {
 			buy4Five(sellList)
 		} else {
 			buy(sellList)
 		}
 	} else {
-		if buyLen >= 15 {
+		if buyLen >= 18 {
 			sell4Five(buyList)
 		} else {
 			sell(buyList)

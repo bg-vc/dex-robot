@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/tronprotocol/grpc-gateway/api"
 	"github.com/tronprotocol/grpc-gateway/core"
 	"github.com/vincecfl/go-common/log"
@@ -13,14 +12,13 @@ import (
 )
 
 var (
-	contractAddr    = "TJ86JLUrMEXYQPNXx1tyD1SzxEgPECFpmj"
-	feeLimit       = int64(10000000)
-	test           = 1
+	contractAddr = "TJ86JLUrMEXYQPNXx1tyD1SzxEgPECFpmj"
+	feeLimit     = int64(10000000)
+	test         = 1
 
-	buyMethod             *tools.Method
-	sellMethod            *tools.Method
-	cancelMethod          *tools.Method
-
+	buyMethod    *tools.Method
+	sellMethod   *tools.Method
+	cancelMethod *tools.Method
 )
 
 func InitSmart() error {
@@ -96,12 +94,34 @@ func Sell(isTrxQuote bool, userAddr, userKey string, quoteToken, baseToken strin
 	if isTrxQuote {
 		callValue = quoteAmount
 	}
-	fmt.Printf("callValue:%v\n", callValue)
 	ctxType, ctx, err := tools.GenTriggerSmartContract(userAddr, contractAddr, callValue, record.Data)
 	if err != nil {
 		log.Errorf(record.Err, "GenTriggerSmartContract error")
 		return err
 	}
+	trxHash, result, err := broadcastCtxWithFeeLimit(ctxType, ctx, userKey, feeLimit)
+	if nil != err || result == nil {
+		log.Errorf(err, "broadcastCtxWithFeeLimit error")
+		return errors.New("broadcast error")
+	}
+
+	log.Infof("hash:[%v]-->result.code:%v-->%s", trxHash, result.Code.String(), result.Message)
+	return nil
+}
+
+func Cancel(userAddr, userKey string, orderID int64) error {
+	record := &CallRecord{}
+	record.Data, record.Err = cancelMethod.Pack(tools.GenAbiInt(orderID))
+	if nil != record.Err {
+		log.Errorf(record.Err, "pack error")
+		return record.Err
+	}
+	ctxType, ctx, err := tools.GenTriggerSmartContract(userAddr, contractAddr, 0, record.Data)
+	if err != nil {
+		log.Errorf(record.Err, "GenTriggerSmartContract error")
+		return err
+	}
+
 	trxHash, result, err := broadcastCtxWithFeeLimit(ctxType, ctx, userKey, feeLimit)
 	if nil != err || result == nil {
 		log.Errorf(err, "broadcastCtxWithFeeLimit error")
@@ -177,5 +197,3 @@ type CallRecord struct {
 	Err       error
 	Return    *api.Return
 }
-
-

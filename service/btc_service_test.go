@@ -37,5 +37,5 @@ func TestAAA(t *testing.T) {
 
 	dateTime12 := dateTime00 + 60*60*(12-8)
 
-	t.Logf("currentTime:%v, dateTime12:%v", currentTime, dateTime12)
+	t.Logf("currentTime:%v, dateTime12:%v, %v", currentTime, dateTime12, currentTime%(30*60))
 }
