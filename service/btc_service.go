@@ -53,15 +53,15 @@ func BuyBTCHandle() {
 
 	if buyLen == 0 {
 		tempPrice := price
-		if tempPrice <= 700000 {
-			tempPrice = 900000
+		if tempPrice <= 500000 {
+			tempPrice = 700000
 		}
 		// 比当前价格少10000
 		buyPrice = tempPrice - 10000
 	} else if buyLen < 20 {
 		tempPrice := int64(buyList[buyLen-1].Price * 1e6)
-		if tempPrice <= 700000 {
-			tempPrice = 900000
+		if tempPrice <= 500000 {
+			tempPrice = 700000
 		}
 		// 比最近一单价格少1000~1500
 		buyPrice = tempPrice - RandInt64(1000, 1500)
