@@ -1,0 +1,15 @@
+run_mode: release
+addr: :20004
+name: dex-robot
+url: http://127.0.0.1:20004
+max_ping_count: 10
+
+logger:
+  writers: file,stdout
+  logger_level: INFO
+  logger_file: logs/dex-robot.log
+  log_format_text: false
+  rollingPolicy: size
+  log_rotate_date: 1
+  log_rotate_size: 50
+  log_backup_count: 7
