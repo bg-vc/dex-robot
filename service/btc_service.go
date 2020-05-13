@@ -44,8 +44,8 @@ func BuyBTCHandle() {
 	userKey := btcOwnerKey
 	token1 := btcTokenAddr
 
-	if buyLen >= 10 {
-		log.Infof("buyLen more than 10")
+	if buyLen >= 20 {
+		log.Infof("buyLen more than 20")
 		return
 	}
 
@@ -106,8 +106,8 @@ func SellBTCHandle() {
 	userKey := btcOwnerKey
 	token1 := btcTokenAddr
 
-	if sellLen >= 10 {
-		log.Infof("sellLen more than 10")
+	if sellLen >= 20 {
+		log.Infof("sellLen more than 20")
 		return
 	}
 
@@ -172,7 +172,7 @@ func TradeBTCHandle() {
 
 	log.Infof("TradeBTCHandle buyLen:%v, sellLen:%v", buyLen, sellLen)
 
-	if buyLen < 5 || sellLen < 5 {
+	if buyLen <= 5 || sellLen <= 5 {
 		log.Infof("buyLen or sellLen less than 5")
 		return
 	}
@@ -181,27 +181,27 @@ func TradeBTCHandle() {
 
 	dateTime00 := GetDatetime(currentTime, "1day")
 
-	dateTime12 := dateTime00 + 60*60*(12-8)
+	dateTime12 := dateTime00 + 60*60*8
 
-	if buyLen >= 10 && buyLen-sellLen >= 5 {
+	/*if buyLen >= 20 && buyLen-sellLen >= 5 {
 		sell4Five(buyList)
 		return
-	}
+	}*/
 
-	if sellLen >= 10 && sellLen-buyLen >= 5 {
+	/*if sellLen >= 20 && sellLen-buyLen >= 5 {
 		buy4Five(sellList)
 		return
-	}
+	}*/
 
 	orderType := BUY
 	rand := RandInt64(1, 101)
-	// 12点之前 以卖单为主
+	// 早上8点之前 以卖单为主
 	if currentTime <= dateTime12 {
 		if currentTime%(30*60) <= 600 {
 			sell4Five(buyList)
 			return
 		}
-		if rand <= 15 {
+		if rand <= 30 {
 			orderType = BUY
 		} else {
 			orderType = SELL
@@ -211,7 +211,7 @@ func TradeBTCHandle() {
 			buy4Five(sellList)
 			return
 		}
-		if rand <= 85 {
+		if rand <= 70 {
 			orderType = BUY
 		} else {
 			orderType = SELL
@@ -219,13 +219,13 @@ func TradeBTCHandle() {
 	}
 
 	if orderType == BUY {
-		if sellLen >= 18 {
+		if sellLen >= 30 {
 			buy4Five(sellList)
 		} else {
 			buy(sellList)
 		}
 	} else {
-		if buyLen >= 18 {
+		if buyLen >= 30 {
 			sell4Five(buyList)
 		} else {
 			sell(buyList)

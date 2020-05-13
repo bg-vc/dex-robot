@@ -35,7 +35,7 @@ func TestAAA(t *testing.T) {
 
 	dateTime00 := GetDatetime(currentTime, "1day")
 
-	dateTime12 := dateTime00 + 60*60*(12-8)
+	dateTime12 := dateTime00 + 60*60*12
 
 	t.Logf("currentTime:%v, dateTime12:%v, %v", currentTime, dateTime12, currentTime%(30*60))
 }
