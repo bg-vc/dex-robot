@@ -173,15 +173,15 @@ func TradeBTCHandle() {
 	}
 
 	if buyLen-sellLen >= 5 {
-		if err := buy(sellList); err != nil {
-			log.Errorf(err, "buy error")
+		if err := sell(buyList); err != nil {
+			log.Errorf(err, "sell error")
 		}
 		return
 	}
 
 	if sellLen-buyLen >= 5 {
-		if err := sell(buyList); err != nil {
-			log.Errorf(err, "sell error")
+		if err := buy(sellList); err != nil {
+			log.Errorf(err, "buy error")
 		}
 		return
 	}
