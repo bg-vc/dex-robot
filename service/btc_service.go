@@ -177,6 +177,12 @@ func TradeBTCHandle() {
 		return
 	}
 
+	currentTime := time.Now().Unix()
+
+	dateTime00 := GetDatetime(currentTime, "1day")
+
+	dateTime12 := dateTime00 + 60*60*(12-8)
+
 	if buyLen >= 20 && buyLen-sellLen >= 5 {
 		sell4Five(buyList)
 		return
@@ -186,12 +192,6 @@ func TradeBTCHandle() {
 		buy4Five(sellList)
 		return
 	}
-
-	currentTime := time.Now().Unix()
-
-	dateTime00 := GetDatetime(currentTime, "1day")
-
-	dateTime12 := dateTime00 + 60*60*(12-8)
 
 	orderType := BUY
 	rand := RandInt64(1, 101)
