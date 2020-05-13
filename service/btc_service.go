@@ -6,6 +6,7 @@ import (
 	"github.com/vincecfl/dex-robot/pkg"
 	"github.com/vincecfl/go-common/log"
 	"math/rand"
+	"time"
 )
 
 const (
@@ -60,8 +61,8 @@ func BuyBTCHandle() {
 		if tempPrice <= 700000 {
 			tempPrice = 900000
 		}
-		// 比最近一单价格少100
-		buyPrice = tempPrice - RandInt64(100, 150)
+		// 比最近一单价格少1000~1500
+		buyPrice = tempPrice - RandInt64(1000, 1500)
 	}
 
 	if buyPrice > 0 {
@@ -122,8 +123,8 @@ func SellBTCHandle() {
 		if tempPrice >= 2200000 {
 			tempPrice = 2000000
 		}
-		// 最近一单价格多100
-		sellPrice = tempPrice + RandInt64(100, 150)
+		// 最近一单价格多1000~1500
+		sellPrice = tempPrice + RandInt64(1000, 1500)
 	}
 
 	if sellPrice > 0 {
@@ -188,8 +189,30 @@ func TradeBTCHandle() {
 		return
 	}
 
-	rand := RandInt64(1, 3)
-	if rand == 1 {
+	currentTime := time.Now().Unix()
+
+	dateTime00 := GetDatetime(currentTime, "1day")
+
+	dateTime12 := dateTime00 + 60*60*(12-8)
+
+	orderType := 1
+	rand := RandInt64(1, 101)
+	// 12点之前 以卖单为主
+	if currentTime <= dateTime12 {
+		if rand <= 20 {
+			orderType = 1
+		} else {
+			orderType = 2
+		}
+	} else if currentTime > dateTime12 {
+		if rand <= 80 {
+			orderType = 1
+		} else {
+			orderType = 2
+		}
+	}
+
+	if orderType == 1 {
 		if sellLen >= 15 {
 			buy4Five(sellList)
 		} else {
