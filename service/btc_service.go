@@ -15,6 +15,8 @@ const (
 	trxTokenAddr    = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb"
 	btcOwner        = "TPdBHYrTDiop2fgsmZGDEfNN5SucJADCf4"
 	btcOwnerKey     = "514bfc62a1f84b69a46ba6478f991eacb136ef1a2f63a16a66e7f42c14c1de07"
+	BUY             = 1
+	SELL            = 2
 )
 
 func BuyBTCHandle() {
@@ -195,24 +197,24 @@ func TradeBTCHandle() {
 
 	dateTime12 := dateTime00 + 60*60*(12-8)
 
-	orderType := 1
+	orderType := BUY
 	rand := RandInt64(1, 101)
 	// 12点之前 以卖单为主
 	if currentTime <= dateTime12 {
 		if rand <= 20 {
-			orderType = 1
+			orderType = BUY
 		} else {
-			orderType = 2
+			orderType = SELL
 		}
 	} else if currentTime > dateTime12 {
 		if rand <= 80 {
-			orderType = 1
+			orderType = BUY
 		} else {
-			orderType = 2
+			orderType = SELL
 		}
 	}
 
-	if orderType == 1 {
+	if orderType == BUY {
 		if sellLen >= 15 {
 			buy4Five(sellList)
 		} else {
