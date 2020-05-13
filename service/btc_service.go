@@ -167,6 +167,8 @@ func TradeBTCHandle() {
 	sellList := resp.Data.Sell
 	sellLen := len(sellList)
 
+	log.Infof("TradeBTCHandle buyLen:%v, sellLen:%v", buyLen, sellLen)
+
 	if buyLen < 5 || sellLen < 5 {
 		log.Infof("buyLen or sellLen less than 5")
 		return
