@@ -179,9 +179,7 @@ func TradeBTCHandle() {
 
 	currentTime := time.Now().Unix()
 
-	dateTime00 := GetDatetime(currentTime, "1day")
-
-	dateTime12 := dateTime00 + 60*60*8
+	dateTime08 := GetDatetime(currentTime, "1day")
 
 	/*if buyLen >= 20 && buyLen-sellLen >= 5 {
 		sell4Five(buyList)
@@ -196,7 +194,7 @@ func TradeBTCHandle() {
 	orderType := BUY
 	rand := RandInt64(1, 101)
 	// 早上8点之前 以卖单为主
-	if currentTime <= dateTime12 {
+	if currentTime <= dateTime08 {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
@@ -211,7 +209,7 @@ func TradeBTCHandle() {
 		} else {
 			orderType = SELL
 		}
-	} else if currentTime > dateTime12 {
+	} else if currentTime > dateTime08 {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
