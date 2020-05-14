@@ -2,7 +2,6 @@ package pkg
 
 import (
 	"github.com/fsnotify/fsnotify"
-	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
 	"github.com/vincecfl/go-common/log"
 	"gopkg.in/redis.v5"
@@ -11,14 +10,13 @@ import (
 
 var (
 	Cfg        *Config
-	DBWrite    *sqlx.DB
-	DBRead     *sqlx.DB
 	RedisCli   *redis.Client
 	HttpClient *http.Client
 )
 
 type Config struct {
 	Logger     *LoggerConfig
+	Redis      *RedisConfig
 	HttpClient *HttpClientConfig
 }
 
@@ -46,6 +44,7 @@ func setConfig(cfgName string) {
 func loadConfig() *Config {
 	cfg := &Config{
 		Logger:     LoadLoggerConfig(viper.Sub("logger")),
+		Redis:      LoadRedisConfig(viper.Sub("redis")),
 		HttpClient: LoadHttpClientConfig(),
 	}
 	return cfg
@@ -53,6 +52,7 @@ func loadConfig() *Config {
 
 func initConfig(cfg *Config) {
 	cfg.Logger.InitLogger()
+	RedisCli = cfg.Redis.InitRedis()
 	HttpClient = cfg.HttpClient.InitHttpClient()
 }
 

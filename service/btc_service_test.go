@@ -39,3 +39,13 @@ func TestAAA(t *testing.T) {
 
 	t.Logf("currentTime:%v, dateTime12:%v, %v", currentTime, dateTime12, currentTime%(30*60))
 }
+
+func TestGetRobotType(t *testing.T) {
+	pkg.Init("../conf/config.yaml")
+	t.Logf("%v", GetRobotType())
+}
+
+func TestSetRobotType(t *testing.T) {
+	pkg.Init("../conf/config.yaml")
+	SetRobotType(2)
+}

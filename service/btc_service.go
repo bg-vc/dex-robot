@@ -40,6 +40,13 @@ func BuyBTCHandle() {
 	buyLen := len(buyList)
 	price := int64(resp.Data.Price * 1e6)
 
+	if price <= 5*1e5 || buyList[buyLen-1].Price*1e6 <= 5*1e5 {
+		if err := SetRobotType(1); err != nil {
+			log.Errorf(err, "SetRobotType error")
+			return
+		}
+	}
+
 	userAddr := btcOwner
 	userKey := btcOwnerKey
 	token1 := btcTokenAddr
@@ -53,15 +60,15 @@ func BuyBTCHandle() {
 
 	if buyLen == 0 {
 		tempPrice := price
-		if tempPrice <= 500000 {
-			tempPrice = 700000
+		if tempPrice <= 5*1e5 {
+			tempPrice = 6 * 1e5
 		}
 		// 比当前价格少10000
 		buyPrice = tempPrice - 10000
 	} else if buyLen < 20 {
 		tempPrice := int64(buyList[buyLen-1].Price * 1e6)
-		if tempPrice <= 500000 {
-			tempPrice = 700000
+		if tempPrice <= 5*1e5 {
+			tempPrice = 6 * 1e5
 		}
 		// 比最近一单价格少1000~1500
 		buyPrice = tempPrice - RandInt64(1000, 1500)
@@ -69,7 +76,14 @@ func BuyBTCHandle() {
 
 	if buyPrice > 0 {
 		token2 := trxTokenAddr
-		amount1 := RandInt64(20, 30) * 1e6
+		amount1 := int64(0)
+		if buyPrice <= 1*1e6 {
+			amount1 = RandInt64(20, 30) * 1e6
+		} else if buyPrice > 1*1e6 && buyPrice <= 2*1e6 {
+			amount1 = RandInt64(10, 20) * 1e6
+		} else if buyPrice > 2*1e6 {
+			amount1 = RandInt64(5, 10) * 1e6
+		}
 		amount2 := amount1 * buyPrice / 1e6
 		err = Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
 		if err != nil {
@@ -102,6 +116,13 @@ func SellBTCHandle() {
 	sellLen := len(sellList)
 	price := int64(resp.Data.Price * 1e6)
 
+	if price >= 30*1e5 || sellList[sellLen-1].Price*1e6 >= 30*1e5 {
+		if err := SetRobotType(2); err != nil {
+			log.Errorf(err, "SetRobotType error")
+			return
+		}
+	}
+
 	userAddr := btcOwner
 	userKey := btcOwnerKey
 	token1 := btcTokenAddr
@@ -115,15 +136,15 @@ func SellBTCHandle() {
 
 	if sellLen == 0 {
 		tempPrice := price
-		if tempPrice >= 2200000 {
-			tempPrice = 2000000
+		if tempPrice >= 30*1e5 {
+			tempPrice = 29 * 1e5
 		}
 		// 比当前价格多10000
 		sellPrice = tempPrice + 10000
 	} else if sellLen < 20 {
 		tempPrice := int64(sellList[sellLen-1].Price * 1e6)
-		if tempPrice >= 2200000 {
-			tempPrice = 2000000
+		if tempPrice >= 30*1e5 {
+			tempPrice = 29 * 1e5
 		}
 		// 最近一单价格多1000~1500
 		sellPrice = tempPrice + RandInt64(1000, 1500)
@@ -131,7 +152,14 @@ func SellBTCHandle() {
 
 	if sellPrice > 0 {
 		token2 := trxTokenAddr
-		amount1 := RandInt64(20, 30) * 1e6
+		amount1 := int64(0)
+		if sellPrice <= 1*1e6 {
+			amount1 = RandInt64(20, 30) * 1e6
+		} else if sellPrice > 1*1e6 && sellPrice <= 2*1e6 {
+			amount1 = RandInt64(10, 20) * 1e6
+		} else if sellPrice > 2*1e6 {
+			amount1 = RandInt64(5, 10) * 1e6
+		}
 		amount2 := amount1 * sellPrice / 1e6
 		err := Approve(btcTokenAddr, userAddr, userKey, dexContractAddr, amount1)
 		if err != nil {
@@ -172,29 +200,23 @@ func TradeBTCHandle() {
 
 	log.Infof("TradeBTCHandle buyLen:%v, sellLen:%v", buyLen, sellLen)
 
-	if buyLen <= 5 || sellLen <= 5 {
-		log.Infof("buyLen or sellLen less than 5")
+	if buyLen <= 6 || sellLen <= 6 {
+		log.Infof("buyLen or sellLen less than 6")
+		return
+	}
+
+	robotType := GetRobotType()
+	if robotType == 0 {
+		log.Errorf(nil, "robotType is 0")
 		return
 	}
 
 	currentTime := time.Now().Unix()
 
-	dateTime08 := GetDatetime(currentTime, "1day")
-
-	/*if buyLen >= 20 && buyLen-sellLen >= 5 {
-		sell4Five(buyList)
-		return
-	}*/
-
-	/*if sellLen >= 20 && sellLen-buyLen >= 5 {
-		buy4Five(sellList)
-		return
-	}*/
-
 	orderType := BUY
 	rand := RandInt64(1, 101)
-	// 早上8点之前 以卖单为主
-	if currentTime <= dateTime08 {
+	// robotType为2 卖单为主
+	if robotType == 2 {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
@@ -209,7 +231,7 @@ func TradeBTCHandle() {
 		} else {
 			orderType = SELL
 		}
-	} else if currentTime > dateTime08 {
+	} else if robotType == 1 {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
@@ -227,18 +249,8 @@ func TradeBTCHandle() {
 	}
 
 	if orderType == BUY {
-		/*if sellLen >= 30 {
-			buy4Five(sellList)
-		} else {
-			buy(sellList)
-		}*/
 		buy(sellList)
 	} else {
-		/*if buyLen >= 30 {
-			sell4Five(buyList)
-		} else {
-			sell(buyList)
-		}*/
 		sell(buyList)
 	}
 	return

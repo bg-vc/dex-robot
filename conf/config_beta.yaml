@@ -13,3 +13,9 @@ logger:
   log_rotate_date: 1
   log_rotate_size: 50
   log_backup_count: 7
+
+redis:
+  host: 127.0.0.1:6379
+  index: 0
+  pool_size: 10
+  pass: 123456
