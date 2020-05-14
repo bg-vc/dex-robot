@@ -2,13 +2,14 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/vincecfl/dex-robot/pkg"
 	"github.com/vincecfl/go-common/log"
 	"time"
 )
 
 const (
-	RobotTypeKey = "dex:robot:type"
+	RobotTypeKey = "dex:robot:type:%v"
 )
 
 func GetDatetime(datetime int64, period string) int64 {
@@ -43,13 +44,14 @@ func GetDatetime(datetime int64, period string) int64 {
 	return newDatetime
 }
 
-func GetRobotType() int {
+func GetRobotType(pairID int) int {
+	key := fmt.Sprintf(RobotTypeKey, pairID)
 	result := 0
-	if !pkg.RedisExists(RobotTypeKey) {
-		log.Errorf(nil, "GetRobotType no such key in redis:%v", RobotTypeKey)
+	if !pkg.RedisExists(key) {
+		log.Errorf(nil, "GetRobotType no such key in redis:%v", key)
 		return 0
 	}
-	val := pkg.GetRedisVal(RobotTypeKey)
+	val := pkg.GetRedisVal(key)
 	if len(val) == 0 {
 		return 0
 	}
@@ -61,8 +63,9 @@ func GetRobotType() int {
 	return result
 }
 
-func SetRobotType(robotType int) error {
-	if err := pkg.SetRedisVal(RobotTypeKey, robotType, 0); err != nil {
+func SetRobotType(pairID, robotType int) error {
+	key := fmt.Sprintf(RobotTypeKey, pairID)
+	if err := pkg.SetRedisVal(key, robotType, 0); err != nil {
 		log.Errorf(err, "SetRedisVal error")
 		return err
 	}

@@ -42,10 +42,10 @@ func TestAAA(t *testing.T) {
 
 func TestGetRobotType(t *testing.T) {
 	pkg.Init("../conf/config.yaml")
-	t.Logf("%v", GetRobotType())
+	t.Logf("%v", GetRobotType(1))
 }
 
 func TestSetRobotType(t *testing.T) {
 	pkg.Init("../conf/config.yaml")
-	SetRobotType(2)
+	SetRobotType(1, 2)
 }

@@ -41,7 +41,7 @@ func BuyBTCHandle() {
 	price := int64(resp.Data.Price * 1e6)
 
 	if price <= 5*1e5 || buyList[buyLen-1].Price*1e6 <= 5*1e5 {
-		if err := SetRobotType(1); err != nil {
+		if err := SetRobotType(1, 1); err != nil {
 			log.Errorf(err, "SetRobotType error")
 			return
 		}
@@ -117,7 +117,7 @@ func SellBTCHandle() {
 	price := int64(resp.Data.Price * 1e6)
 
 	if price >= 30*1e5 || sellList[sellLen-1].Price*1e6 >= 30*1e5 {
-		if err := SetRobotType(2); err != nil {
+		if err := SetRobotType(1, 2); err != nil {
 			log.Errorf(err, "SetRobotType error")
 			return
 		}
@@ -205,7 +205,7 @@ func TradeBTCHandle() {
 		return
 	}
 
-	robotType := GetRobotType()
+	robotType := GetRobotType(1)
 	if robotType == 0 {
 		log.Errorf(nil, "robotType is 0")
 		return
@@ -228,7 +228,7 @@ func TradeBTCHandle() {
 			buy4Five(sellList)
 			return
 		}
-		if rand <= 40 {
+		if rand <= 30 {
 			orderType = BUY
 		} else {
 			orderType = SELL
@@ -243,7 +243,7 @@ func TradeBTCHandle() {
 			sell4Five(buyList)
 			return
 		}
-		if rand <= 60 {
+		if rand <= 70 {
 			orderType = BUY
 		} else {
 			orderType = SELL
