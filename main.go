@@ -42,9 +42,9 @@ func main() {
 	go task.SellETHHandle()
 	go task.TradeETHHandle()
 
-	//go task.BuyEOSHandle()
-	//go task.SellEOSHandle()
-	//go task.TradeEOSHandle()
+	go task.BuyEOSHandle()
+	go task.SellEOSHandle()
+	go task.TradeEOSHandle()
 
 	go func() {
 		if err := pingServer(); err != nil {
