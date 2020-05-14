@@ -80,7 +80,7 @@ func BuyBTCHandle() {
 		if buyPrice <= 1*1e6 {
 			amount1 = RandInt64(20, 30) * 1e6
 		} else if buyPrice > 1*1e6 && buyPrice <= 2*1e6 {
-			amount1 = RandInt64(10, 20) * 1e6
+			amount1 = RandInt64(10, 15) * 1e6
 		} else if buyPrice > 2*1e6 {
 			amount1 = RandInt64(5, 10) * 1e6
 		}
@@ -156,7 +156,7 @@ func SellBTCHandle() {
 		if sellPrice <= 1*1e6 {
 			amount1 = RandInt64(20, 30) * 1e6
 		} else if sellPrice > 1*1e6 && sellPrice <= 2*1e6 {
-			amount1 = RandInt64(10, 20) * 1e6
+			amount1 = RandInt64(10, 15) * 1e6
 		} else if sellPrice > 2*1e6 {
 			amount1 = RandInt64(5, 10) * 1e6
 		}
