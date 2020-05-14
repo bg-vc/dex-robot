@@ -42,6 +42,10 @@ func main() {
 	go task.SellETHHandle()
 	go task.TradeETHHandle()
 
+	//go task.BuyEOSHandle()
+	//go task.SellEOSHandle()
+	//go task.TradeEOSHandle()
+
 	go func() {
 		if err := pingServer(); err != nil {
 			log.Fatal("the router has no response, or it might took too long to start up", err)

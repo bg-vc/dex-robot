@@ -7,16 +7,16 @@ import (
 	"time"
 )
 
-func BuyETHHandle() {
-	result, err := pkg.Get(ethUrl, false, "")
+func BuyEOSHandle() {
+	result, err := pkg.Get(eosUrl, false, "")
 	if err != nil {
-		log.Errorf(err, "BuyETHHandle pkg.Get error")
+		log.Errorf(err, "BuyEOSHandle pkg.Get error")
 		return
 	}
 
 	resp := &ResultResp{}
 	if err := json.Unmarshal([]byte(result), resp); err != nil {
-		log.Errorf(err, "BuyETHHandle json.Unmarshal error")
+		log.Errorf(err, "BuyEOSHandle json.Unmarshal error")
 		return
 	}
 	if resp.Code != 0 {
@@ -28,18 +28,18 @@ func BuyETHHandle() {
 	price := int64(resp.Data.Price * 1e6)
 
 	if price <= 5*1e5 || (buyLen > 0 && buyList[buyLen-1].Price*1e6 <= 5*1e5) {
-		if err := SetRobotType(2, 1); err != nil {
-			log.Errorf(err, "BuyETHHandle SetRobotType error")
+		if err := SetRobotType(3, 1); err != nil {
+			log.Errorf(err, "BuyEOSHandle SetRobotType error")
 			return
 		}
 	}
 
 	userAddr := owner
 	userKey := ownerKey
-	token1 := ethTokenAddr
+	token1 := eosTokenAddr
 
 	if buyLen >= 20 {
-		log.Infof("BuyETHHandle buyLen more than 20")
+		log.Infof("BuyEOSHandle buyLen more than 20")
 		return
 	}
 
@@ -74,24 +74,24 @@ func BuyETHHandle() {
 		amount2 := amount1 * buyPrice / 1e6
 		err = Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
 		if err != nil {
-			log.Errorf(err, "BuyETHHandle Buy error")
+			log.Errorf(err, "BuyEOSHandle Buy error")
 			return
 		}
-		log.Infof("BuyETHHandle success")
+		log.Infof("BuyEOSHandle success")
 		return
 	}
 
 }
 
-func SellETHHandle() {
-	result, err := pkg.Get(ethUrl, false, "")
+func SellEOSHandle() {
+	result, err := pkg.Get(eosUrl, false, "")
 	if err != nil {
-		log.Errorf(err, "SellETHHandle pkg.Get error")
+		log.Errorf(err, "SellEOSHandle pkg.Get error")
 		return
 	}
 	resp := &ResultResp{}
 	if err := json.Unmarshal([]byte(result), resp); err != nil {
-		log.Errorf(err, "SellETHHandle json.Unmarshal error")
+		log.Errorf(err, "SellEOSHandle json.Unmarshal error")
 		return
 	}
 	if resp.Code != 0 {
@@ -103,18 +103,18 @@ func SellETHHandle() {
 	price := int64(resp.Data.Price * 1e6)
 
 	if price >= 30*1e5 || (sellLen > 0 && sellList[sellLen-1].Price*1e6 >= 30*1e5) {
-		if err := SetRobotType(2, 2); err != nil {
-			log.Errorf(err, "SellETHHandle SetRobotType error")
+		if err := SetRobotType(3, 2); err != nil {
+			log.Errorf(err, "SellEOSHandle SetRobotType error")
 			return
 		}
 	}
 
 	userAddr := owner
 	userKey := ownerKey
-	token1 := ethTokenAddr
+	token1 := eosTokenAddr
 
 	if sellLen >= 20 {
-		log.Infof("SellETHHandle sellLen more than 20")
+		log.Infof("SellEOSHandle sellLen more than 20")
 		return
 	}
 
@@ -147,9 +147,9 @@ func SellETHHandle() {
 			amount1 = RandInt64(5, 10) * 1e6
 		}
 		amount2 := amount1 * sellPrice / 1e6
-		err := Approve(ethTokenAddr, userAddr, userKey, dexContractAddr, amount1)
+		err := Approve(eosTokenAddr, userAddr, userKey, dexContractAddr, amount1)
 		if err != nil {
-			log.Errorf(err, "SellETHHandle Approve error")
+			log.Errorf(err, "SellEOSHandle Approve error")
 			return
 		}
 		err = Sell(false, userAddr, userKey, token1, token2, amount1, amount2, sellPrice, 0)
@@ -157,21 +157,21 @@ func SellETHHandle() {
 			log.Errorf(err, "sell error")
 			return
 		}
-		log.Infof("SellETHHandle success")
+		log.Infof("SellEOSHandle success")
 	}
 
 }
 
-func TradeETHHandle() {
-	result, err := pkg.Get(ethUrl, false, "")
+func TradeEOSHandle() {
+	result, err := pkg.Get(eosUrl, false, "")
 	if err != nil {
-		log.Errorf(err, "TradeETHHandle pkg.Get error")
+		log.Errorf(err, "TradeEOSHandle pkg.Get error")
 		return
 	}
 
 	resp := &ResultResp{}
 	if err := json.Unmarshal([]byte(result), resp); err != nil {
-		log.Errorf(err, "TradeETHHandle json.Unmarshal error")
+		log.Errorf(err, "TradeEOSHandle json.Unmarshal error")
 		return
 	}
 	if resp.Code != 0 {
@@ -183,20 +183,20 @@ func TradeETHHandle() {
 	sellList := resp.Data.Sell
 	sellLen := len(sellList)
 
-	log.Infof("TradeETHHandle buyLen:%v, sellLen:%v", buyLen, sellLen)
+	log.Infof("TradeEOSHandle buyLen:%v, sellLen:%v", buyLen, sellLen)
 
 	if buyLen <= 6 || sellLen <= 6 {
-		log.Infof("TradeETHHandle buyLen or sellLen less than 6")
+		log.Infof("TradeEOSHandle buyLen or sellLen less than 6")
 		return
 	}
 
-	robotType := GetRobotType(2)
+	robotType := GetRobotType(3)
 	if robotType == 0 {
-		log.Errorf(nil, "TradeETHHandle obotType is 0")
+		log.Errorf(nil, "TradeEOSHandle obotType is 0")
 		return
 	}
 
-	log.Infof("TradeETHHandle robotType:%v", robotType)
+	log.Infof("TradeEOSHandle robotType:%v", robotType)
 
 	currentTime := time.Now().Unix()
 
@@ -207,10 +207,10 @@ func TradeETHHandle() {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
-			ethSell4Five(buyList)
+			eosSell4Five(buyList)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			ethBuy4Five(sellList)
+			eosBuy4Five(sellList)
 			return
 		}
 		if rand <= 30 {
@@ -222,10 +222,10 @@ func TradeETHHandle() {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
-			ethBuy4Five(sellList)
+			eosBuy4Five(sellList)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			ethSell4Five(buyList)
+			eosSell4Five(buyList)
 			return
 		}
 		if rand <= 70 {
@@ -236,34 +236,34 @@ func TradeETHHandle() {
 	}
 
 	if orderType == BUY {
-		ethBuy(sellList)
+		eosBuy(sellList)
 	} else {
-		ethSell(buyList)
+		eosSell(buyList)
 	}
 	return
 }
 
-func ethBuy(sellList []*PairOrderModel) error {
+func eosBuy(sellList []*PairOrderModel) error {
 	userAddr := owner
 	userKey := ownerKey
-	token1 := ethTokenAddr
+	token1 := eosTokenAddr
 	buyPrice := int64(sellList[0].Price * 1e6)
 	token2 := trxTokenAddr
 	amount1 := RandInt64(20, 30) * 1e6
 	amount2 := amount1 * buyPrice / 1e6
 	err := Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
 	if err != nil {
-		log.Errorf(err, "ethBuy error")
+		log.Errorf(err, "eosBuy error")
 		return err
 	}
-	log.Infof("ethBuy success")
+	log.Infof("eosBuy success")
 	return nil
 }
 
-func ethBuy4Five(sellList []*PairOrderModel) error {
+func eosBuy4Five(sellList []*PairOrderModel) error {
 	userAddr := owner
 	userKey := ownerKey
-	token1 := ethTokenAddr
+	token1 := eosTokenAddr
 	buyPrice := int64(sellList[4].Price * 1e6)
 	token2 := trxTokenAddr
 	amount1 := int64(0)
@@ -274,39 +274,39 @@ func ethBuy4Five(sellList []*PairOrderModel) error {
 	amount2 := amount1 * buyPrice / 1e6
 	err := Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
 	if err != nil {
-		log.Errorf(err, "ethBuy4Five error")
+		log.Errorf(err, "eosBuy4Five error")
 		return err
 	}
-	log.Infof("ethBuy4Five success")
+	log.Infof("eosBuy4Five success")
 	return nil
 }
 
-func ethSell(buyList []*PairOrderModel) error {
+func eosSell(buyList []*PairOrderModel) error {
 	userAddr := owner
 	userKey := ownerKey
-	token1 := ethTokenAddr
+	token1 := eosTokenAddr
 	sellPrice := int64(buyList[0].Price * 1e6)
 	token2 := trxTokenAddr
 	amount1 := RandInt64(20, 30) * 1e6
 	amount2 := amount1 * sellPrice / 1e6
-	err := Approve(ethTokenAddr, userAddr, userKey, dexContractAddr, amount1)
+	err := Approve(eosTokenAddr, userAddr, userKey, dexContractAddr, amount1)
 	if err != nil {
-		log.Errorf(err, "ethSell Approve error")
+		log.Errorf(err, "eosSell Approve error")
 		return err
 	}
 	err = Sell(false, userAddr, userKey, token1, token2, amount1, amount2, sellPrice, 0)
 	if err != nil {
-		log.Errorf(err, "ethSell error")
+		log.Errorf(err, "eosSell error")
 		return err
 	}
-	log.Infof("ethSell success")
+	log.Infof("eosSell success")
 	return nil
 }
 
-func ethSell4Five(buyList []*PairOrderModel) error {
+func eosSell4Five(buyList []*PairOrderModel) error {
 	userAddr := owner
 	userKey := ownerKey
-	token1 := ethTokenAddr
+	token1 := eosTokenAddr
 	sellPrice := int64(buyList[4].Price * 1e6)
 	token2 := trxTokenAddr
 	amount1 := RandInt64(20, 30) * 1e6
@@ -315,16 +315,16 @@ func ethSell4Five(buyList []*PairOrderModel) error {
 	}
 	amount1 += 20 * 1e6
 	amount2 := amount1 * sellPrice / 1e6
-	err := Approve(ethTokenAddr, userAddr, userKey, dexContractAddr, amount1)
+	err := Approve(eosTokenAddr, userAddr, userKey, dexContractAddr, amount1)
 	if err != nil {
-		log.Errorf(err, "ethSell4Five Approve error")
+		log.Errorf(err, "eosSell4Five Approve error")
 		return err
 	}
 	err = Sell(false, userAddr, userKey, token1, token2, amount1, amount2, sellPrice, 0)
 	if err != nil {
-		log.Errorf(err, "ethSell4Five error")
+		log.Errorf(err, "eosSell4Five error")
 		return err
 	}
-	log.Infof("ethSell4Five success")
+	log.Infof("eosSell4Five success")
 	return nil
 }
