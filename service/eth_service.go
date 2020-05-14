@@ -211,6 +211,14 @@ func TradeETHHandle() {
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
 			ethBuy4Five(sellList, 2)
+			time.Sleep(1 * time.Second)
+			btcSell(buyList)
+			time.Sleep(1 * time.Second)
+			btcBuy(sellList)
+			time.Sleep(1 * time.Second)
+			btcSell(buyList)
+			time.Sleep(1 * time.Second)
+			btcBuy(sellList)
 			return
 		}
 		if rand <= 30 {
@@ -226,6 +234,14 @@ func TradeETHHandle() {
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
 			ethSell4Five(buyList, 2)
+			time.Sleep(1 * time.Second)
+			btcSell(buyList)
+			time.Sleep(1 * time.Second)
+			btcBuy(sellList)
+			time.Sleep(1 * time.Second)
+			btcSell(buyList)
+			time.Sleep(1 * time.Second)
+			btcBuy(sellList)
 			return
 		}
 		if rand <= 70 {
