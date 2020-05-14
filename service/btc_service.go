@@ -211,6 +211,8 @@ func TradeBTCHandle() {
 		return
 	}
 
+	log.Infof("robotType:%v", robotType)
+
 	currentTime := time.Now().Unix()
 
 	orderType := BUY
