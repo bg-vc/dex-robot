@@ -5,47 +5,55 @@ import (
 	"fmt"
 	"github.com/vincecfl/dex-robot/pkg"
 	"github.com/vincecfl/go-common/log"
-	"time"
+	"math/rand"
 )
 
 const (
-	RobotTypeKey = "dex:robot:type:%v"
+	btcUrl = "https://bytego123.cn/dex/api/v1/market/pairOrder4Kline/query?pairID=1"
+	ethUrl = "https://bytego123.cn/dex/api/v1/market/pairOrder4Kline/query?pairID=2"
+	eosUrl = "https://bytego123.cn/dex/api/v1/market/pairOrder4Kline/query?pairID=3"
+
+	robotTypeKey    = "dex:robot:type:%v"
+	dexContractAddr = "TJ86JLUrMEXYQPNXx1tyD1SzxEgPECFpmj"
+	trxTokenAddr    = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb"
+	btcTokenAddr    = "TEQEni8FCPrmdTQPUKAu1DCpm3ZYESjFg8"
+	ethTokenAddr    = "TYLNNGZib5fH77Xw3VaWx5J89RiSVfWfbL"
+	eosTokenAddr    = "TDLqNqjsQkZgyRoyr3t7Fxj45QcXfaMzUu"
+
+	owner    = "TPdBHYrTDiop2fgsmZGDEfNN5SucJADCf4"
+	ownerKey = "514bfc62a1f84b69a46ba6478f991eacb136ef1a2f63a16a66e7f42c14c1de07"
+
+	BUY  = 1
+	SELL = 2
 )
 
-func GetDatetime(datetime int64, period string) int64 {
-	datetimeStr := time.Unix(int64(datetime), 0).UTC().Format("2006-01-02 15:04:05")
-	dt, _ := time.ParseInLocation("2006-01-02 15:04:05", datetimeStr, time.UTC)
-	newDatetime := int64(0)
-	switch period {
-	case "1min":
-		newDatetime = time.Date(dt.Year(), dt.Month(), dt.Day(), dt.Hour(), dt.Minute(), 0, 0, time.UTC).Unix()
-	case "5min":
-		step := dt.Minute() % 5
-		newDatetime = time.Date(dt.Year(), dt.Month(), dt.Day(), dt.Hour(), dt.Minute()-step, 0, 0, time.UTC).Unix()
-	case "15min":
-		step := dt.Minute() % 15
-		newDatetime = time.Date(dt.Year(), dt.Month(), dt.Day(), dt.Hour(), dt.Minute()-step, 0, 0, time.UTC).Unix()
-	case "30min":
-		step := dt.Minute() % 30
-		newDatetime = time.Date(dt.Year(), dt.Month(), dt.Day(), dt.Hour(), dt.Minute()-step, 0, 0, time.UTC).Unix()
-	case "1hour":
-		newDatetime = time.Date(dt.Year(), dt.Month(), dt.Day(), dt.Hour(), 0, 0, 0, time.UTC).Unix()
-	case "4hour":
-		step := dt.Hour() % 4
-		newDatetime = time.Date(dt.Year(), dt.Month(), dt.Day(), dt.Hour()-step, 0, 0, 0, time.UTC).Unix()
-	case "1day":
-		newDatetime = time.Date(dt.Year(), dt.Month(), dt.Day(), 0, 0, 0, 0, time.UTC).Unix()
-	case "1week":
-		step := int(dt.Weekday())
-		newDatetime = time.Date(dt.Year(), dt.Month(), dt.Day()-step, 0, 0, 0, 0, time.UTC).Unix()
-	case "1mon":
-		newDatetime = time.Date(dt.Year(), dt.Month(), 1, 0, 0, 0, 0, time.UTC).Unix()
+func RandInt64(min, max int64) int64 {
+	if min >= max || min == 0 || max == 0 {
+		return max
 	}
-	return newDatetime
+	return rand.Int63n(max-min) + min
+}
+
+type ResultResp struct {
+	Code int           `json:"code"`
+	Data PairOrderResp `json:"data"`
+}
+
+type PairOrderResp struct {
+	Buy   []*PairOrderModel `json:"buy"`
+	Sell  []*PairOrderModel `json:"sell"`
+	Price float64           `json:"price"`
+}
+
+type PairOrderModel struct {
+	Price            float64 `json:"price"`
+	TotalQuoteAmount float64 `json:"totalQuoteAmount"`
+	TotalBaseAmount  float64 `json:"totalBaseAmount"`
+	TotalOrder       int64   `json:"totalOrder"`
 }
 
 func GetRobotType(pairID int) int {
-	key := fmt.Sprintf(RobotTypeKey, pairID)
+	key := fmt.Sprintf(robotTypeKey, pairID)
 	result := 0
 	if !pkg.RedisExists(key) {
 		log.Errorf(nil, "GetRobotType no such key in redis:%v", key)
@@ -64,7 +72,7 @@ func GetRobotType(pairID int) int {
 }
 
 func SetRobotType(pairID, robotType int) error {
-	key := fmt.Sprintf(RobotTypeKey, pairID)
+	key := fmt.Sprintf(robotTypeKey, pairID)
 	if err := pkg.SetRedisVal(key, robotType, 0); err != nil {
 		log.Errorf(err, "SetRedisVal error")
 		return err

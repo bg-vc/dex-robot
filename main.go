@@ -32,11 +32,15 @@ func main() {
 		g,
 	)
 
-
 	service.InitSmart()
+
 	go task.BuyBTCHandle()
 	go task.SellBTCHandle()
 	go task.TradeBTCHandle()
+
+	go task.BuyETHHandle()
+	go task.SellETHHandle()
+	go task.TradeETHHandle()
 
 	go func() {
 		if err := pingServer(); err != nil {

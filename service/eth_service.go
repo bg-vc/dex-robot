@@ -7,16 +7,16 @@ import (
 	"time"
 )
 
-func BuyBTCHandle() {
-	result, err := pkg.Get(btcUrl, false, "")
+func BuyETHHandle() {
+	result, err := pkg.Get(ethUrl, false, "")
 	if err != nil {
-		log.Errorf(err, "BuyBTCHandle pkg.Get error")
+		log.Errorf(err, "BuyETHHandle pkg.Get error")
 		return
 	}
 
 	resp := &ResultResp{}
 	if err := json.Unmarshal([]byte(result), resp); err != nil {
-		log.Errorf(err, "BuyBTCHandle json.Unmarshal error")
+		log.Errorf(err, "BuyETHHandle json.Unmarshal error")
 		return
 	}
 	if resp.Code != 0 {
@@ -29,17 +29,17 @@ func BuyBTCHandle() {
 
 	if price <= 5*1e5 || (buyLen > 0 && buyList[buyLen-1].Price*1e6 <= 5*1e5) {
 		if err := SetRobotType(1, 1); err != nil {
-			log.Errorf(err, "BuyBTCHandle SetRobotType error")
+			log.Errorf(err, "BuyETHHandle SetRobotType error")
 			return
 		}
 	}
 
 	userAddr := owner
 	userKey := ownerKey
-	token1 := btcTokenAddr
+	token1 := ethTokenAddr
 
 	if buyLen >= 20 {
-		log.Infof("BuyBTCHandle buyLen more than 20")
+		log.Infof("BuyETHHandle buyLen more than 20")
 		return
 	}
 
@@ -74,24 +74,24 @@ func BuyBTCHandle() {
 		amount2 := amount1 * buyPrice / 1e6
 		err = Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
 		if err != nil {
-			log.Errorf(err, "BuyBTCHandle Buy error")
+			log.Errorf(err, "BuyETHHandle Buy error")
 			return
 		}
-		log.Infof("BuyBTCHandle BuyBTCHandle success")
+		log.Infof("BuyETHHandle success")
 		return
 	}
 
 }
 
-func SellBTCHandle() {
-	result, err := pkg.Get(btcUrl, false, "")
+func SellETHHandle() {
+	result, err := pkg.Get(ethUrl, false, "")
 	if err != nil {
-		log.Errorf(err, "SellBTCHandle pkg.Get error")
+		log.Errorf(err, "SellETHHandle pkg.Get error")
 		return
 	}
 	resp := &ResultResp{}
 	if err := json.Unmarshal([]byte(result), resp); err != nil {
-		log.Errorf(err, "SellBTCHandle json.Unmarshal error")
+		log.Errorf(err, "SellETHHandle json.Unmarshal error")
 		return
 	}
 	if resp.Code != 0 {
@@ -104,17 +104,17 @@ func SellBTCHandle() {
 
 	if price >= 30*1e5 || (sellLen > 0 && sellList[sellLen-1].Price*1e6 >= 30*1e5) {
 		if err := SetRobotType(1, 2); err != nil {
-			log.Errorf(err, "SellBTCHandle SetRobotType error")
+			log.Errorf(err, "SellETHHandle SetRobotType error")
 			return
 		}
 	}
 
 	userAddr := owner
 	userKey := ownerKey
-	token1 := btcTokenAddr
+	token1 := ethTokenAddr
 
 	if sellLen >= 20 {
-		log.Infof("SellBTCHandle sellLen more than 20")
+		log.Infof("SellETHHandle sellLen more than 20")
 		return
 	}
 
@@ -147,31 +147,31 @@ func SellBTCHandle() {
 			amount1 = RandInt64(5, 10) * 1e6
 		}
 		amount2 := amount1 * sellPrice / 1e6
-		err := Approve(btcTokenAddr, userAddr, userKey, dexContractAddr, amount1)
+		err := Approve(ethTokenAddr, userAddr, userKey, dexContractAddr, amount1)
 		if err != nil {
-			log.Errorf(err, "SellBTCHandle Approve error")
+			log.Errorf(err, "SellETHHandle Approve error")
 			return
 		}
 		err = Sell(false, userAddr, userKey, token1, token2, amount1, amount2, sellPrice, 0)
 		if err != nil {
-			log.Errorf(err, "SellBTCHandle sell error")
+			log.Errorf(err, "sell error")
 			return
 		}
-		log.Infof("SellBTCHandle SellBTCHandle success")
+		log.Infof("SellETHHandle success")
 	}
 
 }
 
-func TradeBTCHandle() {
-	result, err := pkg.Get(btcUrl, false, "")
+func TradeETHHandle() {
+	result, err := pkg.Get(ethUrl, false, "")
 	if err != nil {
-		log.Errorf(err, "TradeBTCHandle pkg.Get error")
+		log.Errorf(err, "TradeETHHandle pkg.Get error")
 		return
 	}
 
 	resp := &ResultResp{}
 	if err := json.Unmarshal([]byte(result), resp); err != nil {
-		log.Errorf(err, "TradeBTCHandle json.Unmarshal error")
+		log.Errorf(err, "TradeETHHandle json.Unmarshal error")
 		return
 	}
 	if resp.Code != 0 {
@@ -183,20 +183,20 @@ func TradeBTCHandle() {
 	sellList := resp.Data.Sell
 	sellLen := len(sellList)
 
-	log.Infof("TradeBTCHandle buyLen:%v, sellLen:%v", buyLen, sellLen)
+	log.Infof("TradeETHHandle buyLen:%v, sellLen:%v", buyLen, sellLen)
 
 	if buyLen <= 6 || sellLen <= 6 {
-		log.Infof("TradeBTCHandle buyLen or sellLen less than 6")
+		log.Infof("TradeETHHandle buyLen or sellLen less than 6")
 		return
 	}
 
-	robotType := GetRobotType(1)
+	robotType := GetRobotType(2)
 	if robotType == 0 {
-		log.Errorf(nil, "TradeBTCHandle robotType is 0")
+		log.Errorf(nil, "TradeETHHandle obotType is 0")
 		return
 	}
 
-	log.Infof("TradeBTCHandle robotType:%v", robotType)
+	log.Infof("TradeETHHandle robotType:%v", robotType)
 
 	currentTime := time.Now().Unix()
 
@@ -207,10 +207,10 @@ func TradeBTCHandle() {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
-			btcSell4Five(buyList)
+			ethSell4Five(buyList)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			btcBuy4Five(sellList)
+			ethBuy4Five(sellList)
 			return
 		}
 		if rand <= 30 {
@@ -222,10 +222,10 @@ func TradeBTCHandle() {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
-			btcBuy4Five(sellList)
+			ethBuy4Five(sellList)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			btcSell4Five(buyList)
+			ethSell4Five(buyList)
 			return
 		}
 		if rand <= 70 {
@@ -236,34 +236,34 @@ func TradeBTCHandle() {
 	}
 
 	if orderType == BUY {
-		btcBuy(sellList)
+		ethBuy(sellList)
 	} else {
-		btcSell(buyList)
+		ethSell(buyList)
 	}
 	return
 }
 
-func btcBuy(sellList []*PairOrderModel) error {
+func ethBuy(sellList []*PairOrderModel) error {
 	userAddr := owner
 	userKey := ownerKey
-	token1 := btcTokenAddr
+	token1 := ethTokenAddr
 	buyPrice := int64(sellList[0].Price * 1e6)
 	token2 := trxTokenAddr
 	amount1 := RandInt64(20, 30) * 1e6
 	amount2 := amount1 * buyPrice / 1e6
 	err := Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
 	if err != nil {
-		log.Errorf(err, "btcBuy error")
+		log.Errorf(err, "ethBuy error")
 		return err
 	}
-	log.Infof("btcBuy success")
+	log.Infof("ethBuy success")
 	return nil
 }
 
-func btcBuy4Five(sellList []*PairOrderModel) error {
+func ethBuy4Five(sellList []*PairOrderModel) error {
 	userAddr := owner
 	userKey := ownerKey
-	token1 := btcTokenAddr
+	token1 := ethTokenAddr
 	buyPrice := int64(sellList[4].Price * 1e6)
 	token2 := trxTokenAddr
 	amount1 := int64(0)
@@ -274,39 +274,39 @@ func btcBuy4Five(sellList []*PairOrderModel) error {
 	amount2 := amount1 * buyPrice / 1e6
 	err := Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
 	if err != nil {
-		log.Errorf(err, "btcBuy4Five error")
+		log.Errorf(err, "ethBuy4Five error")
 		return err
 	}
-	log.Infof("btcBuy4Five success")
+	log.Infof("ethBuy4Five success")
 	return nil
 }
 
-func btcSell(buyList []*PairOrderModel) error {
+func ethSell(buyList []*PairOrderModel) error {
 	userAddr := owner
 	userKey := ownerKey
-	token1 := btcTokenAddr
+	token1 := ethTokenAddr
 	sellPrice := int64(buyList[0].Price * 1e6)
 	token2 := trxTokenAddr
 	amount1 := RandInt64(20, 30) * 1e6
 	amount2 := amount1 * sellPrice / 1e6
-	err := Approve(btcTokenAddr, userAddr, userKey, dexContractAddr, amount1)
+	err := Approve(ethTokenAddr, userAddr, userKey, dexContractAddr, amount1)
 	if err != nil {
-		log.Errorf(err, "btcSell Approve error")
+		log.Errorf(err, "ethSell Approve error")
 		return err
 	}
 	err = Sell(false, userAddr, userKey, token1, token2, amount1, amount2, sellPrice, 0)
 	if err != nil {
-		log.Errorf(err, "btcSell error")
+		log.Errorf(err, "ethSell error")
 		return err
 	}
-	log.Infof("btcSell success")
+	log.Infof("ethSell success")
 	return nil
 }
 
-func btcSell4Five(buyList []*PairOrderModel) error {
+func ethSell4Five(buyList []*PairOrderModel) error {
 	userAddr := owner
 	userKey := ownerKey
-	token1 := btcTokenAddr
+	token1 := ethTokenAddr
 	sellPrice := int64(buyList[4].Price * 1e6)
 	token2 := trxTokenAddr
 	amount1 := RandInt64(20, 30) * 1e6
@@ -315,16 +315,16 @@ func btcSell4Five(buyList []*PairOrderModel) error {
 	}
 	amount1 += 20 * 1e6
 	amount2 := amount1 * sellPrice / 1e6
-	err := Approve(btcTokenAddr, userAddr, userKey, dexContractAddr, amount1)
+	err := Approve(ethTokenAddr, userAddr, userKey, dexContractAddr, amount1)
 	if err != nil {
-		log.Errorf(err, "btcSell4Five Approve error")
+		log.Errorf(err, "ethSell4Five Approve error")
 		return err
 	}
 	err = Sell(false, userAddr, userKey, token1, token2, amount1, amount2, sellPrice, 0)
 	if err != nil {
-		log.Errorf(err, "btcSell4Five error")
+		log.Errorf(err, "ethSell4Five error")
 		return err
 	}
-	log.Infof("btcSell4Five success")
+	log.Infof("ethSell4Five success")
 	return nil
 }
