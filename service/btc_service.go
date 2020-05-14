@@ -207,10 +207,10 @@ func TradeBTCHandle() {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
-			btcSell4Five(buyList)
+			btcSell4Five(buyList, 5)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			btcBuy4Five(sellList)
+			btcBuy4Five(sellList, 2)
 			return
 		}
 		if rand <= 30 {
@@ -222,10 +222,10 @@ func TradeBTCHandle() {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
-			btcBuy4Five(sellList)
+			btcBuy4Five(sellList, 5)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			btcSell4Five(buyList)
+			btcSell4Five(buyList, 2)
 			return
 		}
 		if rand <= 70 {
@@ -260,17 +260,25 @@ func btcBuy(sellList []*PairOrderModel) error {
 	return nil
 }
 
-func btcBuy4Five(sellList []*PairOrderModel) error {
+func btcBuy4Five(sellList []*PairOrderModel, index int) error {
 	userAddr := owner
 	userKey := ownerKey
 	token1 := btcTokenAddr
-	buyPrice := int64(sellList[4].Price * 1e6)
+	buyPrice := int64(sellList[index-1].Price * 1e6)
 	token2 := trxTokenAddr
 	amount1 := int64(0)
-	for i := 0; i <= 4; i++ {
+	for i := 0; i < index; i++ {
 		amount1 += int64(sellList[i].TotalQuoteAmount * 1e6)
 	}
-	amount1 += 20 * 1e6
+	addAmount := int64(0)
+	if buyPrice <= 1*1e6 {
+		addAmount = RandInt64(20, 30) * 1e6
+	} else if buyPrice > 1*1e6 && buyPrice <= 2*1e6 {
+		addAmount = RandInt64(10, 15) * 1e6
+	} else if buyPrice > 2*1e6 {
+		addAmount = RandInt64(5, 10) * 1e6
+	}
+	amount1 += addAmount
 	amount2 := amount1 * buyPrice / 1e6
 	err := Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
 	if err != nil {
@@ -303,17 +311,25 @@ func btcSell(buyList []*PairOrderModel) error {
 	return nil
 }
 
-func btcSell4Five(buyList []*PairOrderModel) error {
+func btcSell4Five(buyList []*PairOrderModel, index int) error {
 	userAddr := owner
 	userKey := ownerKey
 	token1 := btcTokenAddr
-	sellPrice := int64(buyList[4].Price * 1e6)
+	sellPrice := int64(buyList[index-1].Price * 1e6)
 	token2 := trxTokenAddr
 	amount1 := RandInt64(20, 30) * 1e6
-	for i := 0; i <= 4; i++ {
+	for i := 0; i < index; i++ {
 		amount1 += int64(buyList[i].TotalQuoteAmount * 1e6)
 	}
-	amount1 += 20 * 1e6
+	addAmount := int64(0)
+	if sellPrice <= 1*1e6 {
+		addAmount = RandInt64(20, 30) * 1e6
+	} else if sellPrice > 1*1e6 && sellPrice <= 2*1e6 {
+		addAmount = RandInt64(10, 15) * 1e6
+	} else if sellPrice > 2*1e6 {
+		addAmount = RandInt64(5, 10) * 1e6
+	}
+	amount1 += addAmount
 	amount2 := amount1 * sellPrice / 1e6
 	err := Approve(btcTokenAddr, userAddr, userKey, dexContractAddr, amount1)
 	if err != nil {
