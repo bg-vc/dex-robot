@@ -210,7 +210,7 @@ func TradeEOSHandle() {
 			eosSell4Five(buyList, 5)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			eosBuy4Five(sellList, 2)
+			eosBuy4Five(sellList, 3)
 			eosTrade4Loop(buyList, sellList, 5)
 			return
 		}
@@ -226,7 +226,7 @@ func TradeEOSHandle() {
 			eosBuy4Five(sellList, 5)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			eosSell4Five(buyList, 2)
+			eosSell4Five(buyList, 3)
 			eosTrade4Loop(buyList, sellList, 5)
 			return
 		}

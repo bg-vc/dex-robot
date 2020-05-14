@@ -210,7 +210,7 @@ func TradeETHHandle() {
 			ethSell4Five(buyList, 5)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			ethBuy4Five(sellList, 2)
+			ethBuy4Five(sellList, 3)
 			ethTrade4Loop(buyList, sellList, 5)
 			return
 		}
@@ -226,7 +226,7 @@ func TradeETHHandle() {
 			ethBuy4Five(sellList, 5)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			ethSell4Five(buyList, 2)
+			ethSell4Five(buyList, 3)
 			ethTrade4Loop(buyList, sellList, 5)
 			return
 		}
