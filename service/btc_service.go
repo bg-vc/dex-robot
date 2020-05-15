@@ -198,7 +198,7 @@ func TradeBTCHandle() {
 			}
 			// 补充卖单
 			sellPrice := int64(buyList[4].Price * 1e6)
-			if len(sellList) <= 500 {
+			if len(sellList) <= 1000 {
 				for i := 0; i < 5; i++ {
 					btcSell4Supply(sellPrice)
 					sellPrice = sellPrice - RandInt64(1000, 1500)
@@ -211,7 +211,7 @@ func TradeBTCHandle() {
 			}
 			// 补充买单
 			buyPrice := int64(sellList[4].Price * 1e6)
-			if len(buyList) <= 500 {
+			if len(buyList) <= 1000 {
 				for i := 0; i < 5; i++ {
 					btcBuy4Supply(buyPrice)
 					buyPrice = buyPrice - RandInt64(1000, 1500)
