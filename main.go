@@ -34,9 +34,9 @@ func main() {
 
 	service.InitSmart()
 
-	//go task.BuyBTCHandle()
-	//go task.SellBTCHandle()
-	//go task.TradeBTCHandle()
+	go task.BuyBTCHandle()
+	go task.SellBTCHandle()
+	go task.TradeBTCHandle()
 
 	go task.BuyETHHandle()
 	go task.SellETHHandle()
