@@ -210,7 +210,7 @@ func TradeBTCHandle() {
 			btcSell4Five(buyList, 5)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			btcBuy4Five(sellList, 3)
+			btcBuy4Five(sellList, 1)
 			btcTrade4Loop(buyList, sellList, 5)
 			return
 		}
@@ -226,7 +226,7 @@ func TradeBTCHandle() {
 			btcBuy4Five(sellList, 5)
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			btcSell4Five(buyList, 3)
+			btcSell4Five(buyList, 1)
 			btcTrade4Loop(buyList, sellList, 5)
 			return
 		}
