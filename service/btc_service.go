@@ -63,14 +63,7 @@ func BuyBTCHandle() {
 
 	if buyPrice > 0 {
 		token2 := trxTokenAddr
-		amount1 := int64(0)
-		if buyPrice <= 1*1e6 {
-			amount1 = RandInt64(20, 30) * 1e6
-		} else if buyPrice > 1*1e6 && buyPrice <= 2*1e6 {
-			amount1 = RandInt64(10, 15) * 1e6
-		} else if buyPrice > 2*1e6 {
-			amount1 = RandInt64(5, 10) * 1e6
-		}
+		amount1 := getAmount1(buyPrice)
 		amount2 := amount1 * buyPrice / 1e6
 		err = Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
 		if err != nil {
@@ -138,14 +131,7 @@ func SellBTCHandle() {
 
 	if sellPrice > 0 {
 		token2 := trxTokenAddr
-		amount1 := int64(0)
-		if sellPrice <= 1*1e6 {
-			amount1 = RandInt64(20, 30) * 1e6
-		} else if sellPrice > 1*1e6 && sellPrice <= 2*1e6 {
-			amount1 = RandInt64(10, 15) * 1e6
-		} else if sellPrice > 2*1e6 {
-			amount1 = RandInt64(5, 10) * 1e6
-		}
+		amount1 := getAmount1(sellPrice)
 		amount2 := amount1 * sellPrice / 1e6
 		err := Approve(btcTokenAddr, userAddr, userKey, dexContractAddr, amount1)
 		if err != nil {
@@ -207,11 +193,31 @@ func TradeBTCHandle() {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
-			btcSell4Five(buyList, 5)
+			if err := btcSell4Five(buyList, 5); err != nil {
+				return
+			}
+			// 补充卖单
+			sellPrice := int64(buyList[4].Price * 1e6)
+			if len(sellList) <= 500 {
+				for i := 0; i < 5; i++ {
+					btcSell4Supply(sellPrice)
+					sellPrice = sellPrice - RandInt64(1000, 1500)
+				}
+			}
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			btcBuy4Five(sellList, 1)
-			btcTrade4Loop(buyList, sellList, 5)
+			if err := btcBuy4Five(sellList, 5); err != nil {
+				return
+			}
+			// 补充买单
+			buyPrice := int64(sellList[4].Price * 1e6)
+			if len(buyList) <= 500 {
+				for i := 0; i < 5; i++ {
+					btcBuy4Supply(buyPrice)
+					buyPrice = buyPrice - RandInt64(1000, 1500)
+				}
+			}
+			//btcTrade4Loop(buyList, sellList, 5)
 			return
 		}
 		if rand <= 30 {
@@ -223,11 +229,31 @@ func TradeBTCHandle() {
 		time60 := currentTime % (60 * 60)
 		time15 := currentTime % (15 * 60)
 		if time15 <= 300 && time60 < 2700 {
-			btcBuy4Five(sellList, 5)
+			if err := btcBuy4Five(sellList, 5); err != nil {
+				return
+			}
+			// 补充买单
+			buyPrice := int64(sellList[4].Price * 1e6)
+			if len(buyList) <= 500 {
+				for i := 0; i < 5; i++ {
+					btcBuy4Supply(buyPrice)
+					buyPrice = buyPrice - RandInt64(1000, 1500)
+				}
+			}
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			btcSell4Five(buyList, 1)
-			btcTrade4Loop(buyList, sellList, 5)
+			if err := btcSell4Five(buyList, 5); err != nil {
+				return
+			}
+			// 补充卖单
+			sellPrice := int64(buyList[4].Price * 1e6)
+			if len(sellList) <= 500 {
+				for i := 0; i < 5; i++ {
+					btcSell4Supply(sellPrice)
+					sellPrice = sellPrice - RandInt64(1000, 1500)
+				}
+			}
+			//btcTrade4Loop(buyList, sellList, 5)
 			return
 		}
 		if rand <= 70 {
@@ -251,7 +277,7 @@ func btcBuy(sellList []*PairOrderModel) error {
 	token1 := btcTokenAddr
 	buyPrice := int64(sellList[0].Price * 1e6)
 	token2 := trxTokenAddr
-	amount1 := RandInt64(20, 30) * 1e6
+	amount1 := getAmount1(buyPrice)
 	amount2 := amount1 * buyPrice / 1e6
 	err := Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
 	if err != nil {
@@ -272,14 +298,7 @@ func btcBuy4Five(sellList []*PairOrderModel, index int) error {
 	for i := 0; i < index; i++ {
 		amount1 += int64(sellList[i].TotalQuoteAmount * 1e6)
 	}
-	addAmount := int64(0)
-	if buyPrice <= 1*1e6 {
-		addAmount = RandInt64(20, 30) * 1e6
-	} else if buyPrice > 1*1e6 && buyPrice <= 2*1e6 {
-		addAmount = RandInt64(10, 15) * 1e6
-	} else if buyPrice > 2*1e6 {
-		addAmount = RandInt64(5, 10) * 1e6
-	}
+	addAmount := getAmount1(buyPrice)
 	amount1 += addAmount
 	amount2 := amount1 * buyPrice / 1e6
 	err := Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
@@ -297,7 +316,7 @@ func btcSell(buyList []*PairOrderModel) error {
 	token1 := btcTokenAddr
 	sellPrice := int64(buyList[0].Price * 1e6)
 	token2 := trxTokenAddr
-	amount1 := RandInt64(20, 30) * 1e6
+	amount1 := getAmount1(sellPrice)
 	amount2 := amount1 * sellPrice / 1e6
 	err := Approve(btcTokenAddr, userAddr, userKey, dexContractAddr, amount1)
 	if err != nil {
@@ -323,14 +342,7 @@ func btcSell4Five(buyList []*PairOrderModel, index int) error {
 	for i := 0; i < index; i++ {
 		amount1 += int64(buyList[i].TotalQuoteAmount * 1e6)
 	}
-	addAmount := int64(0)
-	if sellPrice <= 1*1e6 {
-		addAmount = RandInt64(20, 30) * 1e6
-	} else if sellPrice > 1*1e6 && sellPrice <= 2*1e6 {
-		addAmount = RandInt64(10, 15) * 1e6
-	} else if sellPrice > 2*1e6 {
-		addAmount = RandInt64(5, 10) * 1e6
-	}
+	addAmount := getAmount1(sellPrice)
 	amount1 += addAmount
 	amount2 := amount1 * sellPrice / 1e6
 	err := Approve(btcTokenAddr, userAddr, userKey, dexContractAddr, amount1)
@@ -354,4 +366,41 @@ func btcTrade4Loop(buyList []*PairOrderModel, sellList []*PairOrderModel, index 
 		btcBuy(sellList)
 		time.Sleep(500 * time.Millisecond)
 	}
+}
+
+func btcBuy4Supply(buyPrice int64) error {
+	userAddr := owner
+	userKey := ownerKey
+	token1 := btcTokenAddr
+	token2 := trxTokenAddr
+	amount1 := getAmount1(buyPrice)
+	amount2 := amount1 * buyPrice / 1e6
+	err := Buy(true, userAddr, userKey, token1, token2, amount1, amount2, buyPrice, 0)
+	if err != nil {
+		log.Errorf(err, "btcBuy4Supply error")
+		return err
+	}
+	log.Infof("btcBuy4Supply success")
+	return nil
+}
+
+func btcSell4Supply(sellPrice int64) error {
+	userAddr := owner
+	userKey := ownerKey
+	token1 := btcTokenAddr
+	token2 := trxTokenAddr
+	amount1 := getAmount1(sellPrice)
+	amount2 := amount1 * sellPrice / 1e6
+	err := Approve(btcTokenAddr, userAddr, userKey, dexContractAddr, amount1)
+	if err != nil {
+		log.Errorf(err, "btcSell4Supply Approve error")
+		return err
+	}
+	err = Sell(false, userAddr, userKey, token1, token2, amount1, amount2, sellPrice, 0)
+	if err != nil {
+		log.Errorf(err, "btcSell4Supply error")
+		return err
+	}
+	log.Infof("btcSell4Supply success")
+	return nil
 }

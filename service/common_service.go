@@ -79,3 +79,15 @@ func SetRobotType(pairID, robotType int) error {
 	}
 	return nil
 }
+
+func getAmount1(price int64) int64 {
+	amount1 := int64(0)
+	if price <= 1*1e6 {
+		amount1 = RandInt64(20, 30) * 1e6
+	} else if price > 1*1e6 && price <= 2*1e6 {
+		amount1 = RandInt64(10, 15) * 1e6
+	} else if price > 2*1e6 {
+		amount1 = RandInt64(5, 10) * 1e6
+	}
+	return amount1
+}
