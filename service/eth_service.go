@@ -349,9 +349,9 @@ func ethSell4Five(buyList []*PairOrderModel, index int) error {
 
 func ethTrade4Loop(buyList []*PairOrderModel, sellList []*PairOrderModel, index int) {
 	for i := 0; i < index; i++ {
-		btcSell(buyList)
+		ethSell(buyList)
 		time.Sleep(500 * time.Millisecond)
-		btcBuy(sellList)
+		ethBuy(sellList)
 		time.Sleep(500 * time.Millisecond)
 	}
 }

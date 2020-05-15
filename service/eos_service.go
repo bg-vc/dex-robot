@@ -349,9 +349,9 @@ func eosSell4Five(buyList []*PairOrderModel, index int) error {
 
 func eosTrade4Loop(buyList []*PairOrderModel, sellList []*PairOrderModel, index int) {
 	for i := 0; i < index; i++ {
-		btcSell(buyList)
+		eosSell(buyList)
 		time.Sleep(500 * time.Millisecond)
-		btcBuy(sellList)
+		eosBuy(sellList)
 		time.Sleep(500 * time.Millisecond)
 	}
 }
