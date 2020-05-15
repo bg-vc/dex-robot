@@ -57,8 +57,7 @@ func BuyBTCHandle() {
 		if tempPrice <= 5*1e5 {
 			tempPrice = 6 * 1e5
 		}
-		// 比最近一单价格少1000~1500
-		buyPrice = tempPrice - RandInt64(1000, 1500)
+		buyPrice = tempPrice - RandInt64(2000, 2500)
 	}
 
 	if buyPrice > 0 {
@@ -125,8 +124,7 @@ func SellBTCHandle() {
 		if tempPrice >= 30*1e5 {
 			tempPrice = 29 * 1e5
 		}
-		// 最近一单价格多1000~1500
-		sellPrice = tempPrice + RandInt64(1000, 1500)
+		sellPrice = tempPrice + RandInt64(2000, 2500)
 	}
 
 	if sellPrice > 0 {
@@ -201,7 +199,7 @@ func TradeBTCHandle() {
 			if len(sellList) <= 1000 {
 				for i := 0; i < 5; i++ {
 					btcSell4Supply(sellPrice)
-					sellPrice = sellPrice - RandInt64(1000, 1500)
+					sellPrice = sellPrice + RandInt64(2000, 2500)
 				}
 			}
 			return
@@ -214,7 +212,7 @@ func TradeBTCHandle() {
 			if len(buyList) <= 1000 {
 				for i := 0; i < 5; i++ {
 					btcBuy4Supply(buyPrice)
-					buyPrice = buyPrice - RandInt64(1000, 1500)
+					buyPrice = buyPrice - RandInt64(2000, 2500)
 				}
 			}
 			//btcTrade4Loop(buyList, sellList, 5)
@@ -237,7 +235,7 @@ func TradeBTCHandle() {
 			if len(buyList) <= 500 {
 				for i := 0; i < 5; i++ {
 					btcBuy4Supply(buyPrice)
-					buyPrice = buyPrice - RandInt64(1000, 1500)
+					buyPrice = buyPrice - RandInt64(2000, 2500)
 				}
 			}
 			return
@@ -250,7 +248,7 @@ func TradeBTCHandle() {
 			if len(sellList) <= 500 {
 				for i := 0; i < 5; i++ {
 					btcSell4Supply(sellPrice)
-					sellPrice = sellPrice - RandInt64(1000, 1500)
+					sellPrice = sellPrice + RandInt64(2000, 2500)
 				}
 			}
 			//btcTrade4Loop(buyList, sellList, 5)
@@ -338,7 +336,7 @@ func btcSell4Five(buyList []*PairOrderModel, index int) error {
 	token1 := btcTokenAddr
 	sellPrice := int64(buyList[index-1].Price * 1e6)
 	token2 := trxTokenAddr
-	amount1 := RandInt64(20, 30) * 1e6
+	amount1 := int64(0)
 	for i := 0; i < index; i++ {
 		amount1 += int64(buyList[i].TotalQuoteAmount * 1e6)
 	}
