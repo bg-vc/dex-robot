@@ -204,13 +204,13 @@ func TradeBTCHandle() {
 			}
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			if err := btcBuy4Five(sellList, 2); err != nil {
+			if err := btcBuy4Five(sellList, 1); err != nil {
 				return
 			}
 			// 补充买单
-			buyPrice := int64(sellList[1].Price * 1e6)
+			buyPrice := int64(sellList[0].Price * 1e6)
 			if len(buyList) <= 1000 {
-				for i := 0; i < 2; i++ {
+				for i := 0; i < 1; i++ {
 					btcBuy4Supply(buyPrice)
 					buyPrice = buyPrice - RandInt64(2000, 2500)
 				}
@@ -240,13 +240,13 @@ func TradeBTCHandle() {
 			}
 			return
 		} else if time15 <= 300 && time60 >= 2700 {
-			if err := btcSell4Five(buyList, 2); err != nil {
+			if err := btcSell4Five(buyList, 1); err != nil {
 				return
 			}
 			// 补充卖单
-			sellPrice := int64(buyList[1].Price * 1e6)
+			sellPrice := int64(buyList[0].Price * 1e6)
 			if len(sellList) <= 500 {
-				for i := 0; i < 2; i++ {
+				for i := 0; i < 1; i++ {
 					btcSell4Supply(sellPrice)
 					sellPrice = sellPrice + RandInt64(2000, 2500)
 				}
