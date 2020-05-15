@@ -1,28 +1,27 @@
 package task
 
 import (
-	"github.com/vincecfl/dex-robot/service"
+	"github.com/vincecfl/dex-robot/service/btc"
 	"time"
 )
 
 func BuyBTCHandle() {
 	for {
-		service.BuyBTCHandle()
+		btc.BuyBTCHandle()
 		time.Sleep(3 * time.Second)
 	}
 }
 
-
 func SellBTCHandle() {
 	for {
-		service.SellBTCHandle()
+		btc.SellBTCHandle()
 		time.Sleep(3 * time.Second)
 	}
 }
 
 func TradeBTCHandle() {
 	for {
-		service.TradeBTCHandle()
+		btc.TradeBTCHandle()
 		time.Sleep(30 * time.Second)
 	}
 }

@@ -1,14 +1,14 @@
 package task
 
 import (
-	"github.com/vincecfl/dex-robot/service"
+	"github.com/vincecfl/dex-robot/service/eos"
 	"time"
 )
 
 func BuyEOSHandle() {
 	time.Sleep(2 * time.Second)
 	for {
-		service.BuyEOSHandle()
+		eos.BuyEOSHandle()
 		time.Sleep(3 * time.Second)
 	}
 }
@@ -16,7 +16,7 @@ func BuyEOSHandle() {
 func SellEOSHandle() {
 	time.Sleep(2 * time.Second)
 	for {
-		service.SellEOSHandle()
+		eos.SellEOSHandle()
 		time.Sleep(3 * time.Second)
 	}
 }
@@ -24,7 +24,7 @@ func SellEOSHandle() {
 func TradeEOSHandle() {
 	time.Sleep(2 * time.Second)
 	for {
-		service.TradeEOSHandle()
+		eos.TradeEOSHandle()
 		time.Sleep(30 * time.Second)
 	}
 }

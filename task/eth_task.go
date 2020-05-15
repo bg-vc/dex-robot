@@ -1,14 +1,14 @@
 package task
 
 import (
-	"github.com/vincecfl/dex-robot/service"
+	"github.com/vincecfl/dex-robot/service/eth"
 	"time"
 )
 
 func BuyETHHandle() {
 	time.Sleep(1 * time.Second)
 	for {
-		service.BuyETHHandle()
+		eth.BuyETHHandle()
 		time.Sleep(3 * time.Second)
 	}
 }
@@ -16,7 +16,7 @@ func BuyETHHandle() {
 func SellETHHandle() {
 	time.Sleep(1 * time.Second)
 	for {
-		service.SellETHHandle()
+		eth.SellETHHandle()
 		time.Sleep(3 * time.Second)
 	}
 }
@@ -24,7 +24,7 @@ func SellETHHandle() {
 func TradeETHHandle() {
 	time.Sleep(1 * time.Second)
 	for {
-		service.TradeETHHandle()
+		eth.TradeETHHandle()
 		time.Sleep(30 * time.Second)
 	}
 }

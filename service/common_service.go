@@ -9,22 +9,9 @@ import (
 )
 
 const (
-	btcUrl = "https://bytego123.cn/dex/api/v1/market/pairOrder4Kline/query?pairID=1"
-	ethUrl = "https://bytego123.cn/dex/api/v1/market/pairOrder4Kline/query?pairID=2"
-	eosUrl = "https://bytego123.cn/dex/api/v1/market/pairOrder4Kline/query?pairID=3"
-
-	robotTypeKey    = "dex:robot:type:%v"
-	dexContractAddr = "TJ86JLUrMEXYQPNXx1tyD1SzxEgPECFpmj"
-	trxTokenAddr    = "T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb"
-	btcTokenAddr    = "TEQEni8FCPrmdTQPUKAu1DCpm3ZYESjFg8"
-	ethTokenAddr    = "TYLNNGZib5fH77Xw3VaWx5J89RiSVfWfbL"
-	eosTokenAddr    = "TDLqNqjsQkZgyRoyr3t7Fxj45QcXfaMzUu"
-
-	owner    = "TPdBHYrTDiop2fgsmZGDEfNN5SucJADCf4"
-	ownerKey = "514bfc62a1f84b69a46ba6478f991eacb136ef1a2f63a16a66e7f42c14c1de07"
-
-	BUY  = 1
-	SELL = 2
+	RobotTypeKey = "dex:robot:type:%v"
+	BUY          = 1
+	SELL         = 2
 )
 
 func RandInt64(min, max int64) int64 {
@@ -53,7 +40,7 @@ type PairOrderModel struct {
 }
 
 func GetRobotType(pairID int) int {
-	key := fmt.Sprintf(robotTypeKey, pairID)
+	key := fmt.Sprintf(RobotTypeKey, pairID)
 	result := 0
 	if !pkg.RedisExists(key) {
 		log.Errorf(nil, "GetRobotType no such key in redis:%v", key)
@@ -72,7 +59,7 @@ func GetRobotType(pairID int) int {
 }
 
 func SetRobotType(pairID, robotType int) error {
-	key := fmt.Sprintf(robotTypeKey, pairID)
+	key := fmt.Sprintf(RobotTypeKey, pairID)
 	if err := pkg.SetRedisVal(key, robotType, 0); err != nil {
 		log.Errorf(err, "SetRedisVal error")
 		return err
@@ -80,7 +67,7 @@ func SetRobotType(pairID, robotType int) error {
 	return nil
 }
 
-func getAmount1(price int64) int64 {
+func GetAmount1(price int64) int64 {
 	amount1 := int64(0)
 	if price <= 1*1e6 {
 		amount1 = RandInt64(20, 30) * 1e6

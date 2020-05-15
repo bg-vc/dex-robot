@@ -132,7 +132,7 @@ func Cancel(userAddr, userKey string, orderID int64) error {
 	return nil
 }
 
-func Approve(contractAddr, ownerAddr, ownerKey, spender string, value int64) error {
+func Approve(contractAddr, OwnerAddr, OwnerKey, spender string, value int64) error {
 	smartContract, err := common.GetWalletClient().GetSmartContract(contractAddr)
 	abi, err := json.Marshal(smartContract.Abi)
 	if nil != err {
@@ -153,13 +153,13 @@ func Approve(contractAddr, ownerAddr, ownerKey, spender string, value int64) err
 		log.Errorf(err, "approveMethod.Pack")
 		return err
 	}
-	ctxType, ctx, err := tools.GenTriggerSmartContract(ownerAddr, contractAddr, 0, data)
+	ctxType, ctx, err := tools.GenTriggerSmartContract(OwnerAddr, contractAddr, 0, data)
 	if err != nil {
 		log.Errorf(err, "GenTriggerSmartContract error")
 		return err
 	}
 
-	trxHash, result, err := broadcastCtxWithFeeLimit(ctxType, ctx, ownerKey, feeLimit)
+	trxHash, result, err := broadcastCtxWithFeeLimit(ctxType, ctx, OwnerKey, feeLimit)
 	if nil != err || result == nil {
 		log.Errorf(err, "broadcastCtxWithFeeLimit error")
 		return errors.New("broadcast error")
