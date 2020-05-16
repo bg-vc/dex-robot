@@ -170,6 +170,23 @@ func Approve(contractAddr, OwnerAddr, OwnerKey, spender string, value int64) err
 	return nil
 }
 
+func TransferTrx(ownerAddress, privateKey, toAddr string, amount int64) error {
+	ctxType, ctx, err := tools.GenTransferContract(ownerAddress, toAddr, amount)
+	if err != nil {
+		return err
+	}
+
+	trxHash, result, err := broadcastCtxWithFeeLimit(ctxType, ctx, privateKey, feeLimit)
+	if nil != err || result == nil {
+		log.Errorf(err, "broadcastCtxWithFeeLimit error")
+		return errors.New("broadcast error")
+	}
+
+	log.Infof("hash:%v,result.code:%v-->%s", trxHash, result.Code.String(), result.Message)
+
+	return nil
+}
+
 func broadcastCtxWithFeeLimit(ctxType core.Transaction_Contract_ContractType, ctx interface{}, privateKey string, feeLimit int64) (string, *api.Return, error) {
 	var hash string
 	var result *api.Return
