@@ -7,14 +7,16 @@ import (
 	"github.com/tronprotocol/grpc-gateway/core"
 	"github.com/vincecfl/go-common/log"
 	"github.com/vincecfl/go-common/tron/common"
+	"github.com/vincecfl/go-common/tron/grpcclient"
 	"github.com/vincecfl/go-common/tron/tools"
 	"github.com/vincecfl/go-common/tron/utils"
+	"sync"
 )
 
 var (
 	contractAddr = "TJ86JLUrMEXYQPNXx1tyD1SzxEgPECFpmj"
 	feeLimit     = int64(10000000)
-	test         = 1
+	test         = 0
 
 	buyMethod    *tools.Method
 	sellMethod   *tools.Method
@@ -213,4 +215,24 @@ type CallRecord struct {
 	TrxHash   string // hex
 	Err       error
 	Return    *api.Return
+}
+
+func ContractHashHandler(hash string, wg *sync.WaitGroup) error {
+	defer wg.Done()
+	tryCnt := 10
+	var err error
+	for tryCnt > 0 {
+		tryCnt--
+		tronAddress := utils.GetTronAddress(hash)
+		client := grpcclient.GetRandomWallet()
+		account, err := client.GetAccount(tronAddress)
+		if err != nil {
+			log.Errorf(err, "ContractHashHandler GetAccount error")
+			continue
+		}
+		log.Infof("ContractHashHandler account:%v balance:%v", tronAddress, account.Balance)
+		return nil
+	}
+
+	return err
 }
