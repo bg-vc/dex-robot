@@ -7,25 +7,23 @@ import (
 	"github.com/vincecfl/dex-robot/pkg"
 	"github.com/vincecfl/dex-robot/service"
 	"github.com/vincecfl/go-common/log"
-	"github.com/vincecfl/go-common/tron/utils"
 	"gopkg.in/redis.v5"
 	"sync"
 	"time"
 )
 
 const (
-	BtcUrl            = "https://apilist.tronscan.org/api/transaction?sort=-timestamp&count=true&limit=5&start=0"
-	LockRobotTransKey = "dex.robot.trons.task"
+	LockRobotTransTrxKey = "dex.robot.trons.trx.task"
 )
 
 func TranHandle() {
 	for {
-		if !lockKey(LockRobotTransKey) {
-			log.Infof("TranHandle lock exit, key:%v", LockRobotTransKey)
+		if !lockKey(LockRobotTransTrxKey) {
+			log.Infof("TranHandle lock exit, key:%v", LockRobotTransTrxKey)
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		err := pkg.RedisCli.Set(LockRobotTransKey, "LockRobotTransValue", 5*time.Minute).Err()
+		err := pkg.RedisCli.Set(LockRobotTransTrxKey, "LockRobotTransValue", 5*time.Minute).Err()
 		if err != nil {
 			log.Errorf(err, "DetailStatisticTask lock redis set error")
 			return
@@ -37,7 +35,7 @@ func TranHandle() {
 }
 
 func tranHandleSub() {
-	defer pkg.RedisCli.Del(LockRobotTransKey)
+	defer pkg.RedisCli.Del(LockRobotTransTrxKey)
 	url := fmt.Sprintf(`https://apilist.tronscan.org/api/transaction?sort=-timestamp&count=true&limit=5&start=0`)
 	req, resp := fasthttp.AcquireRequest(), fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseRequest(req)
@@ -58,13 +56,13 @@ func tranHandleSub() {
 		return
 	}
 
-	log.Infof("tranResp:%v", utils.ToJSONStr(tranResp))
+	//log.Infof("tranResp:%v", utils.ToJSONStr(tranResp))
 
 	var wg sync.WaitGroup
 	for _, item := range tranResp.DataList {
 		wg.Add(1)
 		log.Infof("hash:%v", item.Hash)
-		service.ContractHashHandler(item.Hash, &wg)
+		service.TrxHandler(item.Hash, &wg)
 	}
 
 	wg.Wait()
