@@ -36,7 +36,7 @@ func TranHandle() {
 
 func tranHandleSub() {
 	defer pkg.RedisCli.Del(LockRobotTransTrxKey)
-	url := fmt.Sprintf(`https://apilist.tronscan.org/api/transaction?sort=-timestamp&count=true&limit=5&start=0`)
+	url := fmt.Sprintf(`https://apilist.tronscan.org/api/transaction?sort=-timestamp&count=true&limit=10&start=0`)
 	req, resp := fasthttp.AcquireRequest(), fasthttp.AcquireResponse()
 	defer fasthttp.ReleaseRequest(req)
 	defer fasthttp.ReleaseResponse(resp)
