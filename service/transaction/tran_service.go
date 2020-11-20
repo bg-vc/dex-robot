@@ -61,7 +61,6 @@ func tranHandleSub() {
 	var wg sync.WaitGroup
 	for _, item := range tranResp.DataList {
 		wg.Add(1)
-		log.Infof("hash:%v", item.Hash)
 		service.TrxHandler(item.Hash, &wg)
 	}
 
